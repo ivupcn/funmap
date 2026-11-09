@@ -5,7 +5,7 @@
       <template #left>
         <van-icon name="arrow-left" size="20" @click="router.back()" />
       </template>
-      <template #default>
+      <template #title>
         <div class="search-view__input-wrap">
           <van-icon name="search" />
           <input
@@ -115,15 +115,28 @@ function getCategoryIcon(category) {
   border-radius: var(--radius-round);
   padding: var(--spacing-xs) var(--spacing-md);
   flex: 1;
+  min-width: 0; /* 防止 flex 子项溢出 */
+}
+
+/* 覆盖 Vant NavBar title 的 van-ellipsis 裁剪 */
+.search-view :deep(.van-nav-bar__title) {
+  overflow: visible;
+  max-width: none;
 }
 
 .search-view__input {
   flex: 1;
+  min-width: 0; /* flex 子项必须设 min-width:0 才能正确收缩 */
   border: none;
   background: transparent;
   font-size: 14px;
   outline: none;
   color: var(--color-text);
+}
+
+/* 隐藏浏览器原生 search 清除按钮，使用自定义 van-icon */
+.search-view__input::-webkit-search-cancel-button {
+  display: none;
 }
 
 .search-view__input::placeholder {

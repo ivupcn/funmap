@@ -1,6 +1,22 @@
 /**
- * Mock POI 数据 — 大柴旦区域
- * 坐标为百分比坐标 (x, y)，后续由 mapStore.percentToLatLng 转换为经纬度
+ * Mock 数据 — 大柴旦区域
+ * 包含地图配置和 POI 数据，后续由后端 API 提供
+ */
+
+/**
+ * 地图配置（对应原 public/map/config.json）
+ */
+export const mapConfig = {
+  image: '/map/hand-drawn.jpg',
+  tilesPath: '/map/tiles',
+  maxZoom: null,
+  initialZoom: 2,
+}
+
+/**
+ * POI 数据
+ * x/y 为百分比坐标，用于手绘地图上的标记定位
+ * lat/lng 为真实经纬度，用于导航和地图服务
  */
 export const mockPois = [
   // ===== 讲解（景点） =====
@@ -12,6 +28,8 @@ export const mockPois = [
       '艾肯泉位于青海省海西州大柴旦行委，被称为"恶魔之眼"。泉眼周围由含硫矿物质沉淀形成褐色圆形，从高空俯瞰如同一只巨大的眼睛，令人叹为观止。',
     x: 25,
     y: 55,
+    lat: 37.7833,
+    lng: 95.4667,
     image: '',
     audioUrl: '',
     audioDuration: 180,
@@ -30,6 +48,8 @@ export const mockPois = [
       '翡翠湖是一组由化工矿开采形成的人工湖，因湖中矿物质含量不同，呈现出翠绿色、深蓝色等多种颜色，宛如翡翠般晶莹剔透，是大柴旦最著名的景点之一。',
     x: 42,
     y: 35,
+    lat: 37.7333,
+    lng: 95.5167,
     image: '',
     audioUrl: '',
     audioDuration: 240,
@@ -48,6 +68,8 @@ export const mockPois = [
       '火星营地是中国首个火星模拟基地，位于柴达木盆地腹地。这里地貌独特，雅丹地貌广布，酷似火星表面，是体验"火星生活"和星空观测的绝佳之地。',
     x: 70,
     y: 20,
+    lat: 37.9167,
+    lng: 95.1833,
     image: '',
     audioUrl: '',
     audioDuration: 200,
@@ -66,6 +88,8 @@ export const mockPois = [
       '西台吉乃尔湖又称"双色湖"，因G315国道从湖中穿过，公路两侧湖水呈现一蓝一绿两种颜色，形成独特的"水上公路"景观。',
     x: 80,
     y: 15,
+    lat: 37.5167,
+    lng: 93.7167,
     image: '',
     audioUrl: '',
     audioDuration: 160,
@@ -84,6 +108,8 @@ export const mockPois = [
       '乌素特雅丹地质公园是世界上最大、最年轻的雅丹地貌群，被誉为"地球上最像火星的地方"。日落时分，雅丹群在金色夕阳下蔚为壮观。',
     x: 60,
     y: 25,
+    lat: 37.6167,
+    lng: 94.0500,
     image: '',
     audioUrl: '',
     audioDuration: 220,
@@ -102,6 +128,8 @@ export const mockPois = [
       '情人湖由可鲁克湖和托素湖组成，一淡一咸，一高一低，被誉为"情人之眼"。湖区风光秀美，是候鸟栖息的重要湿地。',
     x: 35,
     y: 65,
+    lat: 37.2833,
+    lng: 96.0000,
     image: '',
     audioUrl: '',
     audioDuration: 150,
@@ -121,6 +149,8 @@ export const mockPois = [
     description: '正宗的柴达木盆地草膘羊肉，肉质鲜嫩，无膻味，是大柴旦必尝的特色美食。',
     x: 44,
     y: 38,
+    lat: 37.7583,
+    lng: 95.5250,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -138,6 +168,8 @@ export const mockPois = [
     description: '选用当地草膘羊肉，炭火现烤，外焦里嫩，配上秘制调料，风味独特。',
     x: 46,
     y: 33,
+    lat: 37.7600,
+    lng: 95.5280,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -155,6 +187,8 @@ export const mockPois = [
     description: '提供正宗蒙古族咸奶茶，搭配奶皮子、炒米等传统小吃，体验草原饮食文化。',
     x: 40,
     y: 40,
+    lat: 37.7570,
+    lng: 95.5220,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -174,6 +208,8 @@ export const mockPois = [
     description: '位于火星营地内的太空舱住宿，模拟火星居住环境，提供独特的"火星过夜"体验。',
     x: 71,
     y: 21,
+    lat: 37.9170,
+    lng: 95.1840,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -191,6 +227,8 @@ export const mockPois = [
     description: '紧邻翡翠湖的自驾车营地，提供帐篷、房车等多种住宿方式，可观赏湖景日落。',
     x: 43,
     y: 36,
+    lat: 37.7340,
+    lng: 95.5170,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -208,6 +246,8 @@ export const mockPois = [
     description: '位于镇中心的商务酒店，设施齐全，交通便利，是游览大柴旦各景点的理想住宿选择。',
     x: 45,
     y: 37,
+    lat: 37.7590,
+    lng: 95.5260,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -227,6 +267,8 @@ export const mockPois = [
     description: '售卖枸杞、藜麦、牦牛肉干、盐湖工艺品等青海特产，适合购买伴手礼。',
     x: 44,
     y: 36,
+    lat: 37.7585,
+    lng: 95.5255,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -246,6 +288,8 @@ export const mockPois = [
     description: '位于镇中心广场旁，24小时开放。',
     x: 45,
     y: 38,
+    lat: 37.7595,
+    lng: 95.5265,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -263,6 +307,8 @@ export const mockPois = [
     description: '翡翠湖景区入口处游客中心内。',
     x: 42,
     y: 34,
+    lat: 37.7335,
+    lng: 95.5165,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -282,6 +328,8 @@ export const mockPois = [
     description: '翡翠湖景区专用停车场，可容纳约200辆车。',
     x: 41,
     y: 34,
+    lat: 37.7330,
+    lng: 95.5160,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -299,6 +347,8 @@ export const mockPois = [
     description: '火星营地游客停车场，自驾游客可在此停放。',
     x: 69,
     y: 19,
+    lat: 37.9165,
+    lng: 95.1835,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -318,6 +368,8 @@ export const mockPois = [
     description: '提供旅游咨询、地图领取、行李寄存、紧急救援等综合服务。',
     x: 45,
     y: 39,
+    lat: 37.7588,
+    lng: 95.5258,
     image: '',
     audioUrl: '',
     audioDuration: 0,
@@ -335,6 +387,8 @@ export const mockPois = [
     description: '大柴旦地区最大的医疗机构，提供急诊、门诊等服务。',
     x: 47,
     y: 37,
+    lat: 37.7610,
+    lng: 95.5290,
     image: '',
     audioUrl: '',
     audioDuration: 0,

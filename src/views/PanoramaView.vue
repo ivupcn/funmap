@@ -73,12 +73,15 @@ onMounted(() => {
     defaultZoomLvl: 0,
     fisheye: false,
     navbar: 'zoom fullscreen',
-    touchmoveTwoFingers: true, // 双指才能旋转，防止误触
+    touchmoveTwoFingers: false, // 单指即可旋转
     mousewheel: true,
     mousewheelCtrlKey: false,
     moveInertia: true, // 惯性滑动
     minFov: 30,
     maxFov: 90,
+    lang: {
+      twoFingers: '请用双指滑动旋转视角',
+    },
   })
 
   // 5 秒后自动隐藏操作提示

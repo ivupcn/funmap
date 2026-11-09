@@ -69,7 +69,10 @@ export function useMap(containerRef) {
 
     tileLayer.addTo(map.value)
 
-    // === 自定义双指缩放：每次张合超过阈值就固定缩放一级 ===
+    // === 自定义双指缩放（解决 Leaflet Drag 拦截问题）===
+    // 问题：Leaflet Drag handler 在 document 上注册 touchmove（bubble phase），
+    //       会调用 preventDefault() 阻止我们的容器 listener 收到事件。
+    // 解决：使用 capture phase 监听器，它在 bubble phase 之前触发，优先级更高。
     const mapEl = containerRef.value
     let pinchStartDist = 0
     let pinchDecided = false
@@ -82,33 +85,45 @@ export function useMap(containerRef) {
       return Math.sqrt(dx * dx + dy * dy)
     }
 
+    // capture phase：优先于 document 上的 bubble phase listener
     mapEl.addEventListener('touchstart', (e) => {
+      console.log('[PinchDebug] touchstart, touches:', e.touches.length)
       if (e.touches.length === 2) {
         pinchStartDist = getTouchDist(e)
         pinchDecided = false
+        console.log('[PinchDebug] 2-finger detected, startDist:', pinchStartDist.toFixed(1))
+        // 禁用 drag 防止它拦截 pinch 手势
+        map.value.dragging.disable()
       }
-    }, { passive: true })
+    }, { passive: true, capture: true })
 
     mapEl.addEventListener('touchmove', (e) => {
+      console.log('[PinchDebug] touchmove, touches:', e.touches.length, 'pinchStartDist:', pinchStartDist, 'decided:', pinchDecided)
       if (e.touches.length !== 2 || !pinchStartDist || pinchDecided) return
-      e.preventDefault()
+      e.preventDefault() // 阻止 Leaflet Drag 处理
       const dist = getTouchDist(e)
       const ratio = dist / pinchStartDist
+      console.log('[PinchDebug] dist:', dist.toFixed(1), 'ratio:', ratio.toFixed(3))
       if (ratio > PINCH_THRESHOLD) {
         pinchDecided = true
+        console.log('[PinchDebug] zoomIn!')
         map.value.zoomIn(1, { animate: true })
       } else if (ratio < 1 / PINCH_THRESHOLD) {
         pinchDecided = true
+        console.log('[PinchDebug] zoomOut!')
         map.value.zoomOut(1, { animate: true })
       }
-    }, { passive: false })
+    }, { passive: false, capture: true })
 
     mapEl.addEventListener('touchend', (e) => {
+      console.log('[PinchDebug] touchend, touches:', e.touches.length)
       if (e.touches.length < 2) {
         pinchStartDist = 0
         pinchDecided = false
+        // 恢复 drag
+        map.value.dragging.enable()
       }
-    }, { passive: true })
+    }, { passive: true, capture: true })
 
     // 调试信息：监听缩放事件，输出当前缩放级别和瓦片状态
     map.value.on('zoomend', () => {
@@ -119,11 +134,21 @@ export function useMap(containerRef) {
       console.log(`[MapDebug] zoom=${z}, maxZoom=${maxZoom}, maxNativeZoom=${mapStore.maxZoom}, tiles: ${tiles.length} total / ${loaded} loaded / ${failed} failed`)
     })
 
-    // 用 setView 设置初始视图（以实际图片中心为准，而非 pad 正方形中心）
-    map.value.setView(
-      [mapStore.imgHeight / 2, mapStore.imgWidth / 2],
-      mapStore.maxZoom
-    )
+    // 恢复上次地图状态（路由返回时），否则使用默认初始视图
+    if (mapStore.lastZoom != null && mapStore.lastCenter != null) {
+      map.value.setView(mapStore.lastCenter, mapStore.lastZoom)
+      console.log(`[MapDebug] 恢复上次视图: zoom=${mapStore.lastZoom}, center=${mapStore.lastCenter}`)
+    } else {
+      map.value.setView(
+        [mapStore.imgHeight / 2, mapStore.imgWidth / 2],
+        mapStore.initialZoom
+      )
+    }
+
+    // 监听用户操作，实时保存地图状态
+    map.value.on('moveend zoomend', () => {
+      mapStore.saveMapView(map.value.getZoom(), map.value.getCenter())
+    })
 
     isReady.value = true
   })

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { mapConfig } from '@/data/mock'
 
 export const useMapStore = defineStore('map', () => {
   // 图片尺寸（运行时从图片加载获取）
@@ -21,9 +22,14 @@ export const useMapStore = defineStore('map', () => {
   // 缩放级别
   const zoom = ref(0)
 
+  // 上次用户操作的地图状态（用于路由返回时恢复）
+  const lastZoom = ref(null)
+  const lastCenter = ref(null)
+
   // 缩放范围
   const minZoom = 0
   const maxZoom = ref(12)
+  const initialZoom = ref(0)
 
   // 瓦片路径
   const tilesPath = ref('/map/tiles')
@@ -36,11 +42,11 @@ export const useMapStore = defineStore('map', () => {
 
   /**
    * 加载地图配置和图片尺寸
+   * 当前从 mock 数据读取，后续切换为后端 API
    */
   async function loadConfig() {
     try {
-      const res = await fetch('/map/config.json')
-      const config = await res.json()
+      const config = mapConfig
 
       tilesPath.value = config.tilesPath || '/map/tiles'
       imagePath.value = config.image || '/map/hand-drawn.jpg'
@@ -74,11 +80,14 @@ export const useMapStore = defineStore('map', () => {
         maxZoom.value = Math.ceil(Math.log2(paddedDim.value / 256))
       }
 
-      // 初始 zoom = maxZoom（显示完整图片，每片瓦片约 256px）
-      zoom.value = maxZoom.value
+      // 初始缩放级别（可在 config.json 中配置，默认 = maxZoom - 2）
+      initialZoom.value = config.initialZoom ?? Math.max(0, maxZoom.value - 2)
+
+      // 初始 zoom
+      zoom.value = initialZoom.value
 
       configLoaded.value = true
-      console.log(`[MapStore] 配置加载完成: ${imgWidth.value}×${imgHeight.value}, paddedDim=${paddedDim.value}, maxZoom=${maxZoom.value}`)
+      console.log(`[MapStore] 配置加载完成: ${imgWidth.value}×${imgHeight.value}, paddedDim=${paddedDim.value}, maxZoom=${maxZoom.value}, initialZoom=${initialZoom.value}`)
     } catch (err) {
       console.error('[MapStore] 配置加载失败:', err)
     }
@@ -102,6 +111,14 @@ export const useMapStore = defineStore('map', () => {
     return { x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100 }
   }
 
+  /**
+   * 保存当前地图状态（缩放级别 + 中心点）
+   */
+  function saveMapView(zoomLevel, centerLatLng) {
+    lastZoom.value = zoomLevel
+    lastCenter.value = centerLatLng
+  }
+
   return {
     imgWidth,
     imgHeight,
@@ -111,11 +128,15 @@ export const useMapStore = defineStore('map', () => {
     zoom,
     minZoom,
     maxZoom,
+    initialZoom,
+    lastZoom,
+    lastCenter,
     tilesPath,
     imagePath,
     configLoaded,
     loadConfig,
     percentToLatLng,
     pixelToPercent,
+    saveMapView,
   }
 })

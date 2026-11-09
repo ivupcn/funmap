@@ -7,20 +7,19 @@
  * - 将图片 pad 为正方形后按标准瓦片金字塔切割
  * - 瓦片 y 轴翻转：文件 ty=0 对应图像底部（匹配 CRS.Simple 的 y-flip 约定）
  * - 保证每片瓦片内容区域与 Leaflet 定位区域一致，零形变
- * - 配置驱动：读取 public/map/config.json 获取图片路径和输出路径
+ * - 配置驱动：读取 src/data/mock.js 中的 mapConfig 获取图片路径和输出路径
  */
 import sharp from 'sharp'
 import { mkdirSync, existsSync, rmSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { readFileSync } from 'node:fs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 
-// ===== 读取配置 =====
-const configPath = join(ROOT, 'public/map/config.json')
-const config = JSON.parse(readFileSync(configPath, 'utf-8'))
+// ===== 读取配置（从 mock 数据）=====
+const { mapConfig } = await import(join(ROOT, 'src/data/mock.js'))
+const config = mapConfig
 
 const SOURCE = join(ROOT, 'public', config.image.replace(/^\//, ''))
 const OUTPUT = join(ROOT, 'public', config.tilesPath.replace(/^\//, ''))

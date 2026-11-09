@@ -108,6 +108,7 @@ function onEditConfirm(poi) {
 .home-view__header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--spacing-sm);
   padding: var(--spacing-sm) var(--spacing-lg);
   padding-top: calc(var(--spacing-sm) + env(safe-area-inset-top));

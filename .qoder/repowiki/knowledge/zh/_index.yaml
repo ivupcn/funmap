@@ -1,0 +1,31 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: main
+nodes_managed: true
+exported_at: "2026-09-14T03:31:35Z"
+modules:
+    "":
+        dir_name: FunMapUI 前端地图应用
+        title: FunMapUI 前端地图应用
+        scope:
+            - README.md
+            - .gitignore
+            - index.html
+            - package.json
+            - package-lock.json
+            - vite.config.js
+        source_files: []
+        children:
+            - frontend_app
+        depends_on: []
+        related_to: []
+    frontend_app:
+        dir_name: FunMapUI 前端地图应用
+        title: FunMapUI 前端地图应用
+        scope:
+            - src/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
